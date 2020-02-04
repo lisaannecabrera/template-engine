@@ -1,0 +1,24 @@
+{
+  "name": "template-engine",
+  "version": "1.0.0",
+  "description": "homework assignment",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lisaannecabrera/template-engine.git"
+  },
+  "keywords": [],
+  "author": "Lisa Cabrera",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lisaannecabrera/template-engine/issues"
+  },
+  "homepage": "https://github.com/lisaannecabrera/template-engine#readme",
+  "dependencies": {
+    "inquirer": "^7.0.4",
+    "jest": "^25.1.0"
+  }
+}
