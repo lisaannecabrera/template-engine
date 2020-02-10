@@ -128,19 +128,12 @@ const generateHtml = () => {
       integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
       crossorigin="anonymous"
     />
-    <h1>My Team!</h1>
+    <h1 style="text-align: center;">My Team!</h1>
     <div class="container">
       <div class="row">
         <div class="col-12 d-flex flex-direction-column">
 
-          <div class="card m-2">
-            <h5 class="card-title">******Manager******</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-            <p class="card-text">
-              Some quick example text to build on the card title and make up the
-              bulk of the card's content.
-            </p>
-          </div>
+          
 
           ${managerHtml}
           ${engineerHtml}
@@ -154,7 +147,7 @@ const generateHtml = () => {
 
     <title>Document</title>
   </head>
-  <body></body>
+  <body style="background-color: rgb(125, 138, 139);"></body>
 </html>
 `;
   return finalHtml;
