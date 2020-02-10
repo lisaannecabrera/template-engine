@@ -14,87 +14,153 @@ const managers = []; // [obj, obj, obj]
 const engineers = [];
 const interns = [];
 
-// const writeFileAsync = util.promisify(fs);
+const writeFileAsync = util.promisify(fs.writeFile);
 const basicQuestions = prompts[0].basicQuestions;
 
+// add objs to respected arrays
 async function getEmployeeInfo() {
   const employeeInfoObj = await inquirer.prompt(basicQuestions);
   console.log(employeeInfoObj);
   if (employeeInfoObj.title === "Manager") {
-    employeeInfoObj.officeNumber = await inquirer.prompt(prompts[0].Manager);
+    let officeNumberObj = await inquirer.prompt(prompts[0].Manager);
     console.log(employeeInfoObj);
     const newManager = new Manager(
       employeeInfoObj.id,
       employeeInfoObj.name,
       employeeInfoObj.email,
-      employeeInfoObj.officeNumber
+      officeNumberObj.officeNumber
     );
     managers.push(newManager);
   } else if (employeeInfoObj.title === "Engineer") {
-    employeeInfoObj.askForGithub = await inquirer.prompt(prompts[0].Engineer);
+    let githubUserObj = await inquirer.prompt(prompts[0].Engineer);
     console.log(employeeInfoObj);
     const newEngineer = new Engineer(
       employeeInfoObj.id,
       employeeInfoObj.name,
       employeeInfoObj.email,
-      employeeInfoObj.askForGithub
+      githubUserObj.github
     );
     engineers.push(newEngineer);
   } else if (employeeInfoObj.title === "Intern") {
-    employeeInfoObj.askSchool = await inquirer.prompt(prompts[0].Intern);
+    let internSchoolObj = await inquirer.prompt(prompts[0].Intern);
     console.log(employeeInfoObj);
     const newIntern = new Intern(
       employeeInfoObj.id,
       employeeInfoObj.name,
       employeeInfoObj.email,
-      employeeInfoObj.askSchool
+      internSchoolObj.school
     );
     interns.push(newIntern);
   }
 }
 
-getEmployeeInfo();
-
-async function askForOfficeNumber() {
-  return await inquirer.prompt([
-    {
-      type: "input",
-      name: "officeNumber",
-      message: "What is your office Number??"
-    }
-  ]);
-}
-
-async function askForGithub() {
-  return await inquirer.prompt([
-    {
-      type: "input",
-      name: "GithubUser",
-      message: "What is your Github Username?"
-    }
-  ]);
-}
-
-async function askSchool() {
-  return await inquirer.prompt([
-    {
-      type: "input",
-      name: "school",
-      message: "Where did you go to school?"
-    }
-  ]);
-}
-
 async function addMore() {
-  return await inquirer.prompt([
-    {
-      type: "input",
-      name: "addMore",
-      message: "Add more employee?",
-      choice: ["Yes", "No"]
-    }
-  ]);
+  const addMoreResObj = await inquirer.prompt(prompts[0].addMore);
+  if (addMoreResObj.addMore === "Yes") {
+    return true;
+  } else {
+    return false;
+  }
 }
+
+async function init() {
+  let keepAsking = true;
+  while (keepAsking) {
+    await getEmployeeInfo();
+    keepAsking = await addMore();
+  }
+  const final = generateHtml();
+  await writeFileAsync(`./output/text.html`, final);
+  console.log(final);
+  //
+}
+
+const generateHtml = () => {
+  let managerHtml = "";
+  let engineerHtml = "";
+  let internHtml = "";
+  for (const manager of managers) {
+    managerHtml += `
+    <div class="card m-2">
+            <h5 class="card-title">${manager.name}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Manager</h6>
+            <p class="card-text">
+              ID: ${manager.id} <br>
+              Email: ${manager.email} <br>
+              Office Number: ${manager.officeNumber}
+            </p>
+          </div>
+    `;
+  }
+  for (const engineer of engineers) {
+    engineerHtml += `
+  <div class="card m-2">
+            <h5 class="card-title">${engineer.name}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Engineer</h6>
+            <p class="card-text">
+              ID: ${engineer.id} <br>
+              Email: ${engineer.email} <br>
+              GitHub: ${engineer.githubUser}
+            </p>
+          </div>
+    `;
+  }
+  for (const intern of interns) {
+    internHtml += `
+    <div class="card m-2">
+            <h5 class="card-title">${intern.name}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Intern</h6>
+            <p class="card-text">
+              ID: ${intern.id} <br>
+              Email: ${intern.email} <br>
+              School: ${intern.school}
+            </p>
+          </div>
+    `;
+  }
+  let finalHtml = `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <h1>My Team!</h1>
+    <div class="container">
+      <div class="row">
+        <div class="col-12 d-flex flex-direction-column">
+
+          <div class="card m-2">
+            <h5 class="card-title">******Manager******</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+            <p class="card-text">
+              Some quick example text to build on the card title and make up the
+              bulk of the card's content.
+            </p>
+          </div>
+
+          ${managerHtml}
+          ${engineerHtml}
+          ${internHtml}
+        </div>
+      </div>
+    </div>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <title>Document</title>
+  </head>
+  <body></body>
+</html>
+`;
+  return finalHtml;
+};
+
+init();
 
 // const employeeObj = getEmployeeInfo();
 // const employeeInfo = inquirer.prompt(reallyBasicQuestion);
